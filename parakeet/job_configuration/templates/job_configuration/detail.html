@@ -1,0 +1,7 @@
+<p>Job Configuration for {{ job_configuration.partner.code }}</p>
+<p>Will run every {{ job_configuration.scheduling_interval }} minutes.</p>
+<ul>
+  {% for browser in job_configuration.browsers.all %}
+  <li>{{ browser.name }}</li>
+  {% endfor %}
+</ul>
