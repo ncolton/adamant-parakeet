@@ -1,0 +1,9 @@
+{% if browser_list %}
+  <ul>
+  {% for browser in browser_list %}
+    <li><a href="{% url 'browsers:detail' browser.id %}">{{ browser.name }}</a></li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No browsers are available.</p>
+{% endif %}
