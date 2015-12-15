@@ -1,0 +1,9 @@
+{% if partner_list %}
+  <ul>
+  {% for partner in partner_list %}
+    <li><a href="{% url 'partners:detail' partner.id %}">{{ partner.code }}</a> – {{ partner.name }}</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No partners are available.</p>
+{% endif %}
