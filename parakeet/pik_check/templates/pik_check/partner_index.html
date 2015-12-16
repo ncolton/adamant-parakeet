@@ -1,7 +1,7 @@
 {% if partner_list %}
   <ul>
   {% for partner in partner_list %}
-    <li><a href="{% url 'partners:detail' partner.id %}">{{ partner.code }}</a> – {{ partner.name }}</li>
+    <li><a href="{% url 'pik_check:partner_detail' partner.id %}">{{ partner.code }}</a> – {{ partner.name }}</li>
   {% endfor %}
   </ul>
 {% else %}

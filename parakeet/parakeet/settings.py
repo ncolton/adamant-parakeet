@@ -36,9 +36,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'partners.apps.PartnersConfig',
-    'browsers.apps.BrowsersConfig',
-    'job_configuration.apps.JobConfigurationConfig',
+    # 'partners.apps.PartnersConfig',
+    # 'browsers.apps.BrowsersConfig',
+    # 'job_configuration.apps.JobConfigurationConfig',
+    'pik_check.apps.PikCheckConfig',
     'djcelery',
     'django.contrib.admin',
     'django.contrib.auth',

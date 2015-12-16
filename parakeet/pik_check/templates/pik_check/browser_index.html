@@ -1,7 +1,7 @@
 {% if browser_list %}
   <ul>
   {% for browser in browser_list %}
-    <li><a href="{% url 'browsers:detail' browser.id %}">{{ browser.name }}</a></li>
+    <li><a href="{% url 'pik_check:browser_detail' browser.id %}">{{ browser.name }}</a></li>
   {% endfor %}
   </ul>
 {% else %}

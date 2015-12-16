@@ -18,8 +18,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^partners/', include('partners.urls')),
-    url(r'^browsers/', include('browsers.urls')),
-    url(r'^job_configuration/', include('job_configuration.urls')),
+    url(r'^pik/', include('pik_check.urls')),
     url(r'^admin/', admin.site.urls),
 ]
