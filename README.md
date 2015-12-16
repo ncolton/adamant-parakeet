@@ -1,3 +1,27 @@
+# Running
+
+## Daemons
+
+### Beat Scheduler
+
+To enable time-based task scheduling:
+
+`manage.py celery beat -S djcelery.schedulers.DatabaseScheduler`
+
+### Workers
+
+Workers to actually process the tasks which are added to the queues:
+
+`manage.py celery worker`
+
+### Task Tracking
+
+In order to actually see tasks showing up in the DJCELERY Tasks section of the admin interface, the camera must be running.
+
+`manage.py celery events --camera=djcelery.snapshot.Camera --app=parakeet`
+
+# Design Foo
+
 Failures of a queued job should be infrastructure related, not site problems, and auto-retried?
 For a job success that reports a native thread issue, inability to get a selenium session, etc. those need to be reclassified as job failures somehow. This is a code change to the actual PIK check, rather than to the management framework…
 
