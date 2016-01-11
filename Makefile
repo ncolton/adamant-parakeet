@@ -5,4 +5,4 @@ tests:
 	cd parakeet; python manage.py test
 
 pep8:
-	pep8 .
+	pep8 --config=./pep8.conf .
