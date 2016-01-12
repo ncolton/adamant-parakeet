@@ -100,6 +100,7 @@ The outcome of a PIK check against a Partner-Browser pairing.
 
 Responsible for creating a Scheduled Job based on enabled Job Configurations.
 
+```
 Iterate Job Configurations
 	For each active
 		for each permutation
@@ -108,13 +109,16 @@ Iterate Job Configurations
 					update entry with new `run after` value and reset dispatched flag
 			if not in table
 				create new entry
+```
 
 ### Job Dispatcher
 
 Responsible for creating a new job in the queue that will be consumed by a worker to run a PIK check.
 
+```
 For each Scheduled Job not dispatched
 	If now > `run after`
 		create a new PIK check job
 		add it to the queue
 		mark the Scheduled Job as dispatched
+```

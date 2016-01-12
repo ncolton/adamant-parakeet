@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import django.utils.timezone
 from django.db import models
 
 
@@ -31,3 +32,28 @@ class JobConfiguration(models.Model):
             self.enabled,
             self.scheduling_interval
         )
+
+
+class ScheduledJob(models.Model):
+    partner = models.ForeignKey('Partner', on_delete=models.CASCADE, blank=False, null=False)
+    browser = models.ForeignKey('Browser', on_delete=models.CASCADE, blank=False, null=False)
+    hold_until = models.DateTimeField(default=django.utils.timezone.now)
+    dispatched = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return 'partner: %s, browser: %s, can run after %s, dispatched: %s' % (
+            self.partner,
+            self.browser,
+            self.hold_until,
+            self.dispatched
+        )
+
+    def is_on_hold(self):
+        return self.hold_until > django.utils.timezone.now()
+    is_on_hold.boolean = True
+
+    def hold_for_timedelta(self, delta):
+        self.hold_until = django.utils.timezone.now() + delta
+        self.dispatched = False
+        self.full_clean()
+        self.save()

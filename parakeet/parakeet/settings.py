@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     # 'partners.apps.PartnersConfig',
     # 'browsers.apps.BrowsersConfig',
     # 'job_configuration.apps.JobConfigurationConfig',
-    'pik_check.apps.PikCheckConfig',
+    # 'pik_check.apps.PikCheckConfig',
+    'pik_check',
     'djcelery',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -151,6 +152,7 @@ CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 # Only allow workers to subscribe to worker related events by setting fanout_patterns to True
 BROKER_TRANSPORT_OPTIONS = {'fanout_patterns': True}
 
+CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ENABLE_UTC = True

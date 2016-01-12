@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from .models import Partner, Browser, JobConfiguration
+from .models import Partner, Browser, JobConfiguration, ScheduledJob
+import datetime
 
 
 def create_browser(browser_name):
@@ -103,3 +104,14 @@ class BrowserDetailViewTests(TestCase):
         browser = create_browser(browser_name='Detailed Browser')
         response = self.client.get(reverse('pik_check:browser_detail', args=(browser.id,)))
         self.assertContains(response, browser.name, status_code=200)
+
+
+class ScheduledJobModelTests(TestCase):
+    def test_is_on_hold_for_date_in_past_is_false(self):
+        p = create_partner('bob', 'Bob')
+        b = create_browser('Job Browser')
+        scheduled_job = ScheduledJob(partner=p, browser=b)
+        delta = datetime.timedelta(minutes=1)
+        scheduled_job.hold_until = scheduled_job.hold_until - delta  # one minute ago
+        scheduled_job.save()
+        self.assertFalse(scheduled_job.is_on_hold())
