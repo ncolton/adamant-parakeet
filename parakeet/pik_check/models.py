@@ -57,3 +57,37 @@ class ScheduledJob(models.Model):
         self.dispatched = False
         self.full_clean()
         self.save()
+
+
+class CheckStage(models.Model):
+    name = models.CharField(max_length=200, null=False, blank=False, unique=True)
+    identifier = models.CharField(max_length=16, null=False, blank=False, unique=True)
+    ordering = models.PositiveSmallIntegerField(null=False, blank=False, unique=True)
+
+    class Meta:
+        ordering = ['ordering']
+
+    def __unicode__(self):
+        return '{name} ({identifier})'.format(name=self.name, identifier=self.identifier)
+
+
+class CheckStageResult(models.Model):
+    stage = models.ForeignKey('CheckStage', blank=False, null=False)
+    run = models.ForeignKey('CheckRunResult', blank=False, null=False)
+    successful = models.BooleanField(default=False)
+    message = models.TextField(null=True, blank=False)
+
+
+class CheckRunResult(models.Model):
+    partner = models.ForeignKey('Partner', on_delete=models.CASCADE, blank=False, null=False)
+    browser = models.ForeignKey('Browser', on_delete=models.CASCADE, blank=False, null=False)
+    start_time = models.DateTimeField()
+    completion_time = models.DateTimeField()
+    successful = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return '{partner_code}, {browser}'.format(partner_code=self.partner.code, browser=self.browser)
+
+    @property
+    def duration(self):
+        return self.completion_time - self.start_time
