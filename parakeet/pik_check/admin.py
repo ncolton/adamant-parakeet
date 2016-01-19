@@ -26,3 +26,9 @@ class ScheduledJobAdmin(admin.ModelAdmin):
 
     def time_to_hold_as_string(self, obj):
         return timeuntil(obj.hold_until)
+
+
+@admin.register(models.CheckStage)
+class CheckStageAdmin(admin.ModelAdmin):
+    list_display = ('__unicode__', 'ordering')
+    list_editable = ('ordering',)

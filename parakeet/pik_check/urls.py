@@ -12,5 +12,7 @@ urlpatterns = [
     url(r'^job_configurations$', views.JobConfigurationIndexView.as_view(), name='job_configuration_index'),
     url(r'^job_configuration/(?P<pk>[0-9]+)/$',
         views.JobConfigurationDetailView.as_view(),
-        name='job_configuration_detail')
+        name='job_configuration_detail'
+    ),
+    url(r'^job_configuration/new', views.JobConfigurationFormView.as_view(), name='job_configuration_new')
 ]

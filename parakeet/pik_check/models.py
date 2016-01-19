@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import django.utils.timezone
+from django.core import urlresolvers
 from django.db import models
 
 
@@ -32,6 +33,9 @@ class JobConfiguration(models.Model):
             self.enabled,
             self.scheduling_interval
         )
+
+    def get_absolute_url(self):
+        return urlresolvers.reverse('job_configuration_detail', kwargs={'pl': self.pk})
 
 
 class ScheduledJob(models.Model):

@@ -1,7 +1,10 @@
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.views import generic
 from django.shortcuts import render
 
 from .models import Browser, JobConfiguration, Partner
+from .forms import NewJobConfigurationForm
 
 
 def index(request):
@@ -47,3 +50,21 @@ class JobConfigurationDetailView(generic.DetailView):
     model = JobConfiguration
     template_name = 'pik_check/job_configuration_detail.html'
     context_object_name = 'job_configuration'
+
+
+class JobConfigurationFormView(generic.FormView):
+    template_name = 'pik_check/job_configuration_form.html'
+    form_class = NewJobConfigurationForm
+
+    def form_valid(self, form):
+        j = JobConfiguration(
+            partner=form.cleaned_data['partner'],
+            enabled=form.cleaned_data['enabled'],
+            scheduling_interval=form.cleaned_data['scheduling_interval']
+        )
+        j.save()
+        for browser in form.cleaned_data['browsers']:
+            j.browsers.add(browser)
+        j.save()
+
+        return HttpResponseRedirect(reverse('pik_check:job_configuration_detail', kwargs={'pk': j.id}))
