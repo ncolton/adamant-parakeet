@@ -11,11 +11,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 from __future__ import absolute_import
+from datetime import timedelta
 import os
-import djcelery
-
-# Bootstrap django-celery magic
-djcelery.setup_loader()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,7 +38,6 @@ INSTALLED_APPS = [
     # 'job_configuration.apps.JobConfigurationConfig',
     # 'pik_check.apps.PikCheckConfig',
     'pik_check',
-    'djcelery',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -145,9 +141,7 @@ STATIC_URL = '/static/'
 BROKER_URL = 'redis://localhost:6379/1'
 
 # Set if you want state and return values of tasks stored in Redis
-# Probably would be better to have this be django?
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
-CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 
 # Only allow workers to subscribe to worker related events by setting fanout_patterns to True
 BROKER_TRANSPORT_OPTIONS = {'fanout_patterns': True}
@@ -158,3 +152,20 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ENABLE_UTC = True
 CELERY_SEND_EVENTS = True
 CELERY_SEND_TASK_SENT_EVENT = True
+
+CELERYBEAT_SCHEDULE = {
+    'schedule-configured-jobs': {
+        'task': 'pik_check.tasks.schedule_configured_jobs',
+        'schedule': timedelta(seconds=90),
+        'options': {
+            'queue': 'scheduling'
+        }
+    },
+    'dispatch-scheduled-jobs': {
+        'task': 'pik_check.tasks.dispatch_scheduled_jobs',
+        'schedule': timedelta(seconds=90),
+        'options': {
+            'queue': 'scheduling'
+        }
+    }
+}

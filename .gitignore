@@ -1,3 +1,6 @@
+# Celery data / status file
+celerybeat-schedule
+
 ## SASS
 
 .sass-cache/
