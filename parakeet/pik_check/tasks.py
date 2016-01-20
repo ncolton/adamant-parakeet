@@ -92,19 +92,22 @@ def run_pik_check(partner_code, browser_name):
     results.start()
 
     for stage in ['pre-sso-check', 'load-partner-url', 'locate-sr-div', 'log-in', 'sso-confirmed']:
-        results.add_stage_result(Stage(identifier=stage, successful=True))
+        result = random.choice([True, True, True, True, True, False])
+        results.add_stage_result(Stage(identifier=stage, successful=result))
+        if not result:
+            break
 
     delay_seconds = random.randint(30, 180)
 
     logger.info('%s %s sleeping for %s seconds', partner_code, browser_name, delay_seconds)
     sleep(delay_seconds)
     results.complete()
-    results.successful = True
+    results.successful = results.stage_results[-1].successful
 
     store_pik_check_results(results)
 
-    logger.info('pik check result for %s %s: %s', partner_code, browser_name, results)
-    return results
+    logger.info('pik check result for %s %s: %s', partner_code, browser_name, results.successful)
+    return {'partner': partner_code, 'browser': browser_name, 'success': results.successful}
 
 
 def store_pik_check_results(check_run):

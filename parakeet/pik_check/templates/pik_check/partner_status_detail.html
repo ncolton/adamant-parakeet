@@ -1,0 +1,50 @@
+{% extends "pik_check/base.html" %}
+{% load bootstrap3 %}
+{% load pik_check_extras %}
+{% block content %}
+  <h1>{{ partner.name }} ({{partner.code}})</h1>
+  <p>PIK Check
+  {% if job_config %}
+    {% if job_config.enabled %}
+      scheduled to run every {{ job_config.scheduling_interval }} minute(s).
+    {% else %}
+      is disabled.
+    {% endif %}
+  {% else %}
+    is not configured.
+  {% endif %}
+  </p>
+  {% if check_results %}
+    <div class="row">
+    {% for browser, results in check_results.items %}
+      <div class="col-xs-12 col-sm-12 col-md-6">
+      <div class="panel panel-default">
+      <div class="panel-heading">{{ browser.name }}</div>
+      <table class="table table-condensed table-striped">
+        <thead>
+        <tr>
+          <th>Start Time</th>
+          <th>Duration</th>
+          <th>Successful?</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for result in results %}
+          <tr>
+            <td>{{ result.start_time }}</td>
+            <td>{{ result.duration|naturaldelta }}</td>
+          {% if result.successful %}
+            <td class="success">{% bootstrap_icon "ok" %}</td>
+          {% else %}
+            <td class="danger">{% bootstrap_icon "remove" %}</td>
+          {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      </div>
+    {% endfor %}
+    </div>
+  {%  endif %}
+{% endblock content %}

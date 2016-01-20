@@ -1,9 +1,9 @@
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.views import generic
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
-from .models import Browser, JobConfiguration, Partner
+from .models import Browser, JobConfiguration, Partner, CheckRunResult
 from .forms import NewJobConfigurationForm
 
 
@@ -68,3 +68,28 @@ class JobConfigurationFormView(generic.FormView):
         j.save()
 
         return HttpResponseRedirect(reverse('pik_check:job_configuration_detail', kwargs={'pk': j.id}))
+
+
+def partner_status_view(request):
+    partners = Partner.objects.filter(jobconfiguration__isnull=False)
+    return render(request, 'pik_check/partner_status_index.html', {'partner_list': partners})
+
+
+def partner_status_detail_view(request, partner_pk):
+    partner = get_object_or_404(Partner, pk=partner_pk)
+    job_config = JobConfiguration.objects.filter(partner=partner).first()
+    check_results = {}
+    if job_config:
+        for browser in job_config.browsers.all():
+            check_results[browser] = CheckRunResult.objects.filter(partner=partner
+            ).filter(browser=browser).order_by('-start_time')[:10]
+
+    return render(
+        request,
+        'pik_check/partner_status_detail.html',
+        {
+            'partner': partner,
+            'job_config': job_config,
+            'check_results': check_results
+        }
+    )

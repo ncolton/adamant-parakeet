@@ -1,0 +1,15 @@
+{% extends "pik_check/base.html" %}
+{% load bootstrap3 %}
+{% block content %}
+  <h1>Partners</h1>
+  {% if partner_list %}
+    <ul>
+      {% for partner in partner_list %}
+        <li><a href="{% url 'pik_check:partner_status_detail' partner.id %}">{{ partner.code }}</a>
+          – {{ partner.name }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No partners are available.</p>
+  {% endif %}
+{% endblock content %}

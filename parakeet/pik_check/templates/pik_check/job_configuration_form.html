@@ -1,5 +1,14 @@
-<form action="{% url 'pik_check:job_configuration_new' %}" method="post">
+{% extends "pik_check/base.html" %}
+{% load bootstrap3 %}
+
+{% block content %}
+<form action="{% url 'pik_check:job_configuration_new' %}" method="post" class="form">
   {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" value="Submit" />
+  {% bootstrap_form form %}
+  {% buttons %}
+    <button type="submit" class="btn btn-primary">
+      {% bootstrap_icon "star" %} Submit
+    </button>
+  {% endbuttons %}
 </form>
+{% endblock content %}

@@ -1,5 +1,6 @@
-<p>Partner</p>
-<ul>
-  <li>Code: {{ partner.code }}</li>
-  <li>Name: {{ partner.name }}</li>
-</ul>
+{% extends "pik_check/base.html" %}
+{% load bootstrap3 %}
+{% load pik_check_extras %}
+{% block content %}
+<h1>{{ partner.name }} ({{ partner.code }})</h1>
+{% endblock content %}
