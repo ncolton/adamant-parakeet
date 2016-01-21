@@ -92,7 +92,9 @@ def run_pik_check(partner_code, browser_name):
     results.start()
 
     for stage in ['pre-sso-check', 'load-partner-url', 'locate-sr-div', 'log-in', 'sso-confirmed']:
-        result = random.choice([True, True, True, True, True, False])
+        result = True
+        if random.randint(1, 100) > 80:
+            result = False
         results.add_stage_result(Stage(identifier=stage, successful=result))
         if not result:
             break
