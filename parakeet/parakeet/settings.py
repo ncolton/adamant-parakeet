@@ -163,14 +163,14 @@ CELERY_SEND_TASK_SENT_EVENT = True
 CELERYBEAT_SCHEDULE = {
     'schedule-configured-jobs': {
         'task': 'pik_check.tasks.schedule_configured_jobs',
-        'schedule': timedelta(seconds=90),
+        'schedule': timedelta(seconds=30),
         'options': {
             'queue': 'scheduling'
         }
     },
     'dispatch-scheduled-jobs': {
         'task': 'pik_check.tasks.dispatch_scheduled_jobs',
-        'schedule': timedelta(seconds=90),
+        'schedule': timedelta(seconds=30),
         'options': {
             'queue': 'scheduling'
         }
