@@ -1,3 +1,66 @@
+# Settings
+
+Settings specific to the app *pik_check* should go in a dictionary specifically for it:
+
+```python
+PIK_CHECK = {
+    'job_expiry': 60 * 3
+}
+```
+
+## Bootstrap Styling configuration
+
+Configuration for the Bootstrap framework needs to be in a dictionary specifically for it:
+
+```python
+BOOTSTRAP3 = {
+    'include_jquery': True,
+    'jquery_url': '//code.jquery.com/jquery-1.12.0.min.js'
+}
+```
+
+Full documentation is available at http://django-bootstrap3.readthedocs.org/en/latest/settings.html
+
+## Celery Settings
+
+Full details on Celery configuration can be found at http://docs.celeryproject.org/en/latest/configuration.html
+
+### Scheduling and Dispatching Configuration
+
+The configuration should be similar to the following:
+
+```python
+CELERYBEAT_SCHEDULE = {
+    'schedule-configured-jobs': {
+        'task': 'pik_check.tasks.schedule_configured_jobs',
+        'schedule': timedelta(seconds=30),
+        'options': {
+            'queue': 'scheduling'
+        }
+    },
+    'dispatch-scheduled-jobs': {
+        'task': 'pik_check.tasks.dispatch_scheduled_jobs',
+        'schedule': timedelta(seconds=30),
+        'options': {
+            'queue': 'scheduling'
+        }
+    }
+}
+```
+
+Adjusting the *timedelta* value will change how often these jobs are run. Running them frequently should avoid a large back log of tasks needing to be accomplished, ensuring a short run time and not falling behind.
+
+### Task Queue, State, and Result storage
+
+Indicate the storage to use by setting the `BROKER_URL` value.
+
+Set the `CELERY_RESULT_BACKEND` to enable persisting the task state and return values.
+
+### Time Zone
+
+Ensure that `CELERY_ENABLE_UTC` agrees with the `USE_TZ` and `TIME_ZONE` settings.
+
+
 # Running
 
 ## Daemons
@@ -6,19 +69,13 @@
 
 To enable time-based task scheduling:
 
-`manage.py celery beat -S djcelery.schedulers.DatabaseScheduler`
+From the same directory as *manage.py* execute: `celery -A parakeet beat`
 
 ### Workers
 
-Workers to actually process the tasks which are added to the queues:
-
-`manage.py celery worker`
-
-### Task Tracking
-
-In order to actually see tasks showing up in the DJCELERY Tasks section of the admin interface, the camera must be running.
-
-`manage.py celery events --camera=djcelery.snapshot.Camera --app=parakeet`
+From the same directory as *manage.py* execute…
+* `celery -A parakeet worker --queues=scheduling --hostname=scheduling.%h` to process scheduling tasks.
+* `celery -A parakeet worker --queues=pik_check --hostname=pik_check.%h` to process PIK Check jobs.
 
 # Design Foo
 

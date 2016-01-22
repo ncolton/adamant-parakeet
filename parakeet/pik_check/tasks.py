@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import random
 
+from django.conf import settings
 import django.utils.timezone
 from time import sleep
 from celery import shared_task
@@ -34,8 +35,6 @@ def schedule_configured_jobs():
 
 @shared_task
 def dispatch_scheduled_jobs():
-    job_expiration_in_seconds = 300  # 5 minutes
-
     scheduled_jobs = models.ScheduledJob.objects.filter(
         dispatched=False
     ).filter(
@@ -47,7 +46,7 @@ def dispatch_scheduled_jobs():
         run_pik_check.apply_async(
             (scheduled_job.partner.code, scheduled_job.browser.name),
             queue='pik_check',
-            expires=job_expiration_in_seconds
+            expires=settings.PIK_CHECK['job_expiry']
         )
         scheduled_job.dispatched = True
         scheduled_job.save()

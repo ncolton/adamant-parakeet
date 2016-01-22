@@ -133,6 +133,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+PIK_CHECK = {
+    'job_expiry': 60 * 3
+}
 
 BOOTSTRAP3 = {
     'include_jquery': True,
