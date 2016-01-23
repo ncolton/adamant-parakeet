@@ -31,7 +31,7 @@
         <tbody>
         {% for result in results %}
           <tr>
-            <td>{{ result.start_time }}</td>
+            <td><a href="{% url 'pik_check:check_result_detail' result.id %}">{{ result.start_time }}</a></td>
             <td>{{ result.duration|naturaldelta }}</td>
           {% if result.successful %}
             <td class="success">{% bootstrap_icon "ok" %}</td>

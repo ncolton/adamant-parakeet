@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.views import generic
 from django.shortcuts import render, get_object_or_404
 
-from .models import Browser, JobConfiguration, Partner, CheckRunResult
+from .models import Browser, JobConfiguration, Partner, CheckRunResult, CheckStageResult
 from .forms import NewJobConfigurationForm
 
 
@@ -93,3 +93,9 @@ def partner_status_detail_view(request, partner_pk):
             'check_results': check_results
         }
     )
+
+
+def check_result_detail_view(request, check_run_result_pk):
+    run = get_object_or_404(CheckRunResult, pk=check_run_result_pk)
+    stage_results = CheckStageResult.objects.filter(run=run).order_by('stage__ordering')
+    return render(request, 'pik_check/check_result_detail.html', {'run': run, 'results': stage_results})
