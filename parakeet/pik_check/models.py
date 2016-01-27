@@ -24,7 +24,7 @@ class JobConfiguration(models.Model):
     partner = models.ForeignKey('Partner', on_delete=models.CASCADE, blank=False, null=False)
     browsers = models.ManyToManyField('Browser')
     enabled = models.BooleanField(default=False)
-    scheduling_interval = models.PositiveSmallIntegerField()
+    scheduling_interval = models.PositiveSmallIntegerField(default=0)
 
     def __unicode__(self):
         return 'partner: %s, browsers: %s, enabled: %s, interval: %s minutes' % (

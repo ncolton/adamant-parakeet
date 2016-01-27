@@ -4,7 +4,7 @@ from django.views import generic
 from django.shortcuts import render, get_object_or_404
 
 from .models import Browser, JobConfiguration, Partner, CheckRunResult, CheckStageResult
-from .forms import NewJobConfigurationForm
+from .forms import NewJobConfigurationForm, JobConfigurationForm
 
 
 def index(request):
@@ -29,7 +29,7 @@ class PartnerIndexView(generic.ListView):
     context_object_name = 'partner_list'
 
     def get_queryset(self):
-        return Partner.objects.all()
+        return Partner.objects.order_by('name').all()
 
 
 class PartnerDetailView(generic.DetailView):
@@ -71,7 +71,7 @@ class JobConfigurationFormView(generic.FormView):
 
 
 def partner_status_view(request):
-    partners = Partner.objects.filter(jobconfiguration__isnull=False)
+    partners = Partner.objects.filter(jobconfiguration__isnull=False).order_by('name')
     return render(request, 'pik_check/partner_status_index.html', {'partner_list': partners})
 
 
@@ -81,8 +81,8 @@ def partner_status_detail_view(request, partner_pk):
     check_results = {}
     if job_config:
         for browser in job_config.browsers.all():
-            check_results[browser] = CheckRunResult.objects.filter(partner=partner
-            ).filter(browser=browser).order_by('-start_time')[:10]
+            check_results[browser] = CheckRunResult.objects.filter(
+                partner=partner).filter(browser=browser).order_by('-start_time')[:10]
 
     return render(
         request,
@@ -99,3 +99,20 @@ def check_result_detail_view(request, check_run_result_pk):
     run = get_object_or_404(CheckRunResult, pk=check_run_result_pk)
     stage_results = CheckStageResult.objects.filter(run=run).order_by('stage__ordering')
     return render(request, 'pik_check/check_result_detail.html', {'run': run, 'results': stage_results})
+
+
+def partner_job_edit_view(request, partner_id=None):
+    partner = get_object_or_404(Partner, id=partner_id)
+    try:
+        job_configuration = JobConfiguration.objects.get(partner=partner)
+    except JobConfiguration.DoesNotExist:
+        job_configuration = JobConfiguration(partner=partner)
+
+    form = JobConfigurationForm(request.POST or None, instance=job_configuration)
+
+    if request.POST:
+        if form.is_valid():
+            job_configuration = form.save()
+            redirect_url = reverse('pik_check:job_configuration_detail', kwargs={'pk': job_configuration.id})
+            return HttpResponseRedirect(redirect_url)
+    return render(request, 'pik_check/partner_edit_job.html', {'form': form, 'partner': partner})
