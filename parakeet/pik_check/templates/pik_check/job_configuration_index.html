@@ -1,9 +1,13 @@
-{% if job_configuration_list %}
-<ul>
-  {% for job_configuration in job_configuration_list %}
-  <li><a href="{% url 'pik_check:job_configuration_detail' job_configuration.id %}">{{ job_configuration.partner.code }}</a></li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>No job configurations are available.</p>
-{% endif %}
+{% extends "pik_check/base.html" %}
+{% block content %}
+  <h1>Job Configurations</h1>
+  {% if job_configuration_list %}
+  <div class="list-group">
+    {% for job_configuration in job_configuration_list %}
+    <a href="{% url 'pik_check:job_configuration_detail' job_configuration.id %}" class="list-group-item">{{ job_configuration.partner.code }}</a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No job configurations are available.</p>
+  {% endif %}
+{% endblock content %}

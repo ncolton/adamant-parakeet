@@ -1,4 +1,5 @@
 {% load bootstrap3 %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,13 +7,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{% endblock %}</title>
   {% bootstrap_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'pik_check/style.css' %}"/>
   {% bootstrap_javascript %}
 </head>
-<body>
+<body role="document">
+  {%  block navbar %}{% include "pik_check/nav_bar.html" %}{% endblock %}
   <div class="container theme-showcase" role="main">
-  {# Display django.contrib.messages as Bootstrap alerts #}
-  {% bootstrap_messages %}
-  {%block content %}{% endblock %}
+    {# Display django.contrib.messages as Bootstrap alerts #}
+    {% bootstrap_messages %}
+    {%block content %}{% endblock %}
   </div>
 </body>
 </html>

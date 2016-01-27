@@ -1,9 +1,13 @@
-{% if browser_list %}
-  <ul>
-  {% for browser in browser_list %}
-    <li><a href="{% url 'pik_check:browser_detail' browser.id %}">{{ browser.name }}</a></li>
-  {% endfor %}
-  </ul>
-{% else %}
-  <p>No browsers are available.</p>
-{% endif %}
+{% extends "pik_check/base.html" %}
+{% block content %}
+  <h1>Browsers</h1>
+  {% if browser_list %}
+    <div class="list-group">
+    {% for browser in browser_list %}
+      <a href="{% url 'pik_check:browser_detail' browser.id %}" class="list-group-item">{{ browser.name }}</a>
+    {% endfor %}
+    </div>
+  {% else %}
+    <p>No browsers are available.</p>
+  {% endif %}
+{% endblock content %}

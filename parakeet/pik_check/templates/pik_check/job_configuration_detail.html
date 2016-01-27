@@ -1,3 +1,6 @@
+{% extends "pik_check/base.html" %}
+{% load bootstrap3 %}
+{% block content %}
 <p>Job Configuration for {{ job_configuration.partner.code }}</p>
 {% if job_configuration.enabled %}
 <p>Will run every {{ job_configuration.scheduling_interval }} minutes.</p>
@@ -10,3 +13,4 @@
   <li>{{ browser.name }}</li>
   {% endfor %}
 </ul>
+{% endblock content %}
