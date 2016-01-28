@@ -5,10 +5,9 @@
   {% if partner_list %}
     <div class="list-group">
       {% for partner in partner_list %}
-        <a href="{% url 'pik_check:partner_detail' partner.id %}" class="list-group-item">{{ partner.name }}</a>
+        <a href="{% url 'pik_check:partner_detail' partner.id %}" class="list-group-item">{{ partner.name }} ({{ partner.code }})</a>
       {% endfor %}
     </div>
-    <p>Total: {{ partner_list|length }}</p>
   {% else %}
     <p>No partners are available.</p>
   {% endif %}

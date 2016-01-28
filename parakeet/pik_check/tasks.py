@@ -3,9 +3,9 @@ import random
 
 from django.conf import settings
 import django.utils.timezone
+import datetime
 from time import sleep
 from celery import shared_task
-from datetime import timedelta
 from . import models
 
 from celery.utils.log import get_task_logger
@@ -14,23 +14,34 @@ logger = get_task_logger(__name__)
 
 
 @shared_task
-def schedule_configured_jobs():
-    jobs_updated = 0
-    jobs_created = 0
-    for job_configuration in models.JobConfiguration.objects.exclude(enabled=False):
-        for browser in job_configuration.browsers.all():
-            try:
-                job = models.ScheduledJob.objects.get(partner=job_configuration.partner, browser=browser)
-            except models.ScheduledJob.DoesNotExist:
-                models.ScheduledJob.objects.create(partner=job_configuration.partner, browser=browser)
-                jobs_created += 1
+def schedule_jobs():
+    statistics = {
+        'created': 0,
+        'updated': 0,
+        'unaltered': 0
+    }
+    for partner in models.Partner.objects.filter(active_after__lt=datetime.date.today()):
+        if not partner.is_active:
+            continue
+
+        for browser in partner.browsers.all():
+            job, created = models.ScheduledJob.objects.get_or_create(partner=partner, browser=browser)
+            if created:
+                statistics['created'] += 1
             else:
                 if job.dispatched and not job.is_on_hold():
-                    job.hold_for_timedelta(timedelta(minutes=job_configuration.scheduling_interval))
-                    jobs_updated += 1
+                    job.hold_for_timedelta(partner.scheduling_interval)
+                    statistics['updated'] += 1
+                else:
+                    statistics['unaltered'] += 1
 
-    logger.info('updated: %s, created: %s', jobs_updated, jobs_created)
-    return {'updated': jobs_updated, 'created': jobs_created}
+    logger.info(
+        'updated: %s, created: %s, unaltered: %s',
+        statistics['updated'],
+        statistics['created'],
+        statistics['unaltered']
+    )
+    return statistics
 
 
 @shared_task

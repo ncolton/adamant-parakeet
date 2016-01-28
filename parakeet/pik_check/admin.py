@@ -11,13 +11,8 @@ class BrowserAdmin(admin.ModelAdmin):
 
 @admin.register(models.Partner)
 class PartnerAdmin(admin.ModelAdmin):
-    fields = ['code', 'name']
-    list_display = ('code', 'name')
-
-
-@admin.register(models.JobConfiguration)
-class JobConfigurationAdmin(admin.ModelAdmin):
-    list_display = ('enabled', 'partner', 'scheduling_interval')
+    fields = ['code', 'name', 'active_after', 'inactive_after', 'browsers', 'scheduling_interval']
+    list_display = ('code', 'name', 'is_active')
 
 
 @admin.register(models.ScheduledJob)

@@ -4,14 +4,10 @@
 {% block content %}
   <h1>{{ partner.name }} ({{partner.code}})</h1>
   <p>PIK Check
-  {% if job_config %}
-    {% if job_config.enabled %}
-      scheduled to run every {{ job_config.scheduling_interval }} minute(s).
-    {% else %}
-      is disabled.
-    {% endif %}
+  {% if partner.is_active %}
+    scheduled to run every {{ partner.scheduling_interval }}.
   {% else %}
-    is not configured.
+    is disabled.
   {% endif %}
   </p>
   {% if check_results %}

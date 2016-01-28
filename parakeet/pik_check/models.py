@@ -1,16 +1,47 @@
 from __future__ import unicode_literals
+from django.core.exceptions import ValidationError
 
 import django.utils.timezone
 from django.core import urlresolvers
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+from . import validators
+import datetime
 
 
 class Partner(models.Model):
-    code = models.CharField(max_length=20, null=False, blank=False, unique=True)
-    name = models.CharField(max_length=200, null=False, blank=False)
+    code = models.CharField(max_length=20, null=False, blank=False, unique=True,
+                            validators=[validators.validate_uppercase])
+    name = models.CharField(max_length=200, null=False, blank=False, unique=True)
+    active_after = models.DateField(null=True, blank=True)
+    inactive_after = models.DateField(null=True, blank=True)
+    browsers = models.ManyToManyField('Browser')
+    scheduling_interval = models.DurationField(default=datetime.timedelta(minutes=0))
 
     def __unicode__(self):
         return '%s (%s)' % (self.name, self.code)
+
+    @property
+    def is_active(self):
+        if not self.active_after:
+            return False
+
+        if self.inactive_after:
+            if self.inactive_after < django.utils.timezone.now().date():
+                return False
+
+        if self.active_after < django.utils.timezone.now().date():
+            return True
+        else:
+            return False
+
+    def clean(self):
+        if self.inactive_after and self.active_after:
+            if self.inactive_after < self.active_after:
+                raise ValidationError(_('Deactivation date cannot be before the activation date.'))
+
+        if len(''.join(self.code.split())) == 0:
+            raise ValidationError(_('Partner code must be non-blank'))
 
 
 class Browser(models.Model):
@@ -18,24 +49,6 @@ class Browser(models.Model):
 
     def __unicode__(self):
         return '%s' % self.name
-
-
-class JobConfiguration(models.Model):
-    partner = models.ForeignKey('Partner', on_delete=models.CASCADE, blank=False, null=False)
-    browsers = models.ManyToManyField('Browser')
-    enabled = models.BooleanField(default=False)
-    scheduling_interval = models.PositiveSmallIntegerField(default=0)
-
-    def __unicode__(self):
-        return 'partner: %s, browsers: %s, enabled: %s, interval: %s minutes' % (
-            self.partner.code,
-            self.browsers.all(),
-            self.enabled,
-            self.scheduling_interval
-        )
-
-    def get_absolute_url(self):
-        return urlresolvers.reverse('job_configuration_detail', kwargs={'pl': self.pk})
 
 
 class ScheduledJob(models.Model):

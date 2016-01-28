@@ -2,3 +2,5 @@
 pep8==1.6.2
 grip
 django-extensions
+factory_boy==2.6.0
+fake-factory==0.5.3

@@ -31,8 +31,8 @@ The configuration should be similar to the following:
 
 ```python
 CELERYBEAT_SCHEDULE = {
-    'schedule-configured-jobs': {
-        'task': 'pik_check.tasks.schedule_configured_jobs',
+    'schedule-jobs': {
+        'task': 'pik_check.tasks.schedule_jobs',
         'schedule': timedelta(seconds=30),
         'options': {
             'queue': 'scheduling'
