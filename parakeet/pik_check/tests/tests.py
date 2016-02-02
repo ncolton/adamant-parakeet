@@ -70,6 +70,11 @@ class PartnerModelTests(TestCase):
 
 
 class PartnerViewTests(TestCase):
+    def test_call_view_loads(self):
+        response = self.client.get(reverse('pik_check:partner_index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'pik_check/partner_index.html')
+
     def test_index_view_with_no_partners(self):
         response = self.client.get(reverse('pik_check:partner_index'))
         self.assertEqual(response.status_code, 200)
@@ -82,12 +87,51 @@ class PartnerViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context['partner_list'], [repr(expected_partner)])
 
+    def test_index_view_of_disabled_partner_indicates_disabled_state(self):
+        self.skipTest('not implemented yet')
+
+    def test_index_view_of_partner_with_future_activation_indicates_activation_date(self):
+        self.skipTest('not implemented yet')
+
+    def test_index_view_of_partner_with_passed_inactive_after_indicates_deactivation_date(self):
+        self.skipTest('not implemented yet')
+
+    def test_index_view_of_partner_with_future_inactive_after_indicates_deactivation_date(self):
+        self.skipTest('not implemented yet')
+
 
 class PartnerDetailViewTests(TestCase):
+    def test_call_view_loads(self):
+        partner = factories.PartnerFactory()
+        response = self.client.get(reverse('pik_check:partner_detail', args=[partner.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'pik_check/partner_detail.html')
+
     def test_detail_view_with_a_partner(self):
         partner = factories.PartnerFactory()
         response = self.client.get(reverse('pik_check:partner_detail', args=(partner.id,)))
         self.assertContains(response, partner.name, status_code=200)
+
+    def test_detail_view_of_disabled_partner_indicates_partner_is_disabled(self):
+        self.skipTest('not implemented yet')
+
+    def test_view_indicates_future_activation_for_partner_with_active_after_in_future(self):
+        self.skipTest('not implemented yet')
+
+    def test_view_indicates_partner_is_active_with_active_after_in_past(self):
+        self.skipTest('not implemented yet')
+
+    def test_view_indicates_future_inactive_with_inactive_after_in_future(self):
+        self.skipTest('not implemented yet')
+
+    def test_view_indicates_disabled_for_partner_with_inactive_after_in_past(self):
+        self.skipTest('not implemented yet')
+
+    def test_view_displays_browsers_for_partner_config(self):
+        self.skipTest('not implemented yet')
+
+    def test_view_displays_scheduling_interval(self):
+        self.skipTest('not implemented yet')
 
 
 class BrowserViewTests(TestCase):
@@ -120,3 +164,10 @@ class ScheduledJobModelTests(TestCase):
         scheduled_job.hold_until = scheduled_job.hold_until - delta  # one minute ago
         scheduled_job.save()
         self.assertFalse(scheduled_job.is_on_hold())
+
+
+class PartnerStatusViewTests(TestCase):
+    pass
+
+class PartnerStatusDetailViewTests(TestCase):
+    pass
