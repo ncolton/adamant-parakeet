@@ -1,14 +1,28 @@
 {% extends "pik_check/base.html" %}
 {% load bootstrap3 %}
 {% block content %}
+  <div class="page-header">
   <h1>Partners</h1>
-  {% if partner_list %}
+  </div>
+  <div class="panel panel-default">
     <div class="list-group">
       {% for partner in partner_list %}
-        <a href="{% url 'pik_check:partner_detail' partner.id %}" class="list-group-item">{{ partner.name }} ({{ partner.code }})</a>
+        <a href="{% url 'pik_check:partner_detail' partner.id %}"
+           class="list-group-item{% if not partner.is_active %} disabled{% endif %}">
+        {{ partner.name }} ({{ partner.code }})
+        {% if not partner.is_active %}
+          {% if partner.inactive_after %}
+            <span class="badge">Inactive After: {{ partner.inactive_after }}</span>
+          {% elif partner.active_after %}
+            <span class="badge">Active After: {{ partner.active_after }}</span>
+          {% endif %}
+        {% elif partner.inactive_after %}
+          <span class="badge">Inactive After: {{ partner.inactive_after }}</span>
+        {% endif %}
+        </a>
+      {% empty %}
+        <li class="list-group-item">No partners are configured.</li>
       {% endfor %}
     </div>
-  {% else %}
-    <p>No partners are available.</p>
-  {% endif %}
+  </div>
 {% endblock content %}

@@ -78,7 +78,7 @@ class PartnerViewTests(TestCase):
     def test_index_view_with_no_partners(self):
         response = self.client.get(reverse('pik_check:partner_index'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No partners are available.")
+        self.assertContains(response, "No partners are configured.")
         self.assertQuerysetEqual(response.context['partner_list'], [])
 
     def test_index_view_with_a_partner(self):
@@ -87,17 +87,34 @@ class PartnerViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context['partner_list'], [repr(expected_partner)])
 
-    def test_index_view_of_disabled_partner_indicates_disabled_state(self):
-        self.skipTest('not implemented yet')
-
     def test_index_view_of_partner_with_future_activation_indicates_activation_date(self):
-        self.skipTest('not implemented yet')
+        partner = factories.PartnerFactory()
+        partner.active_after = django.utils.timezone.now().date() + datetime.timedelta(days=1)
+        partner.full_clean()
+        partner.save()
+        response = self.client.get(reverse('pik_check:partner_index'))
+        self.assertContains(response, 'Active After: ', count=1)
 
     def test_index_view_of_partner_with_passed_inactive_after_indicates_deactivation_date(self):
-        self.skipTest('not implemented yet')
+        partner = factories.PartnerFactory()
+        partner.active_after = django.utils.timezone.now().date() - datetime.timedelta(days=2)
+        partner.inactive_after = django.utils.timezone.now().date() - datetime.timedelta(days=1)
+        partner.full_clean()
+        partner.save()
+        response = self.client.get(reverse('pik_check:partner_index'))
+        self.assertNotContains(response, 'Active After:')
+        self.assertContains(response, 'Inactive After: ', count=1)
 
     def test_index_view_of_partner_with_future_inactive_after_indicates_deactivation_date(self):
-        self.skipTest('not implemented yet')
+        partner = factories.PartnerFactory()
+        partner.active_after = django.utils.timezone.now().date() - datetime.timedelta(days=1)
+        partner.inactive_after = django.utils.timezone.now().date() + datetime.timedelta(days=1)
+        partner.full_clean()
+        partner.save()
+        response = self.client.get(reverse('pik_check:partner_index'))
+        self.assertTrue(partner.is_active)
+        self.assertNotContains(response, 'Active After:')
+        self.assertContains(response, 'Inactive After: ', count=1)
 
 
 class PartnerDetailViewTests(TestCase):
@@ -168,6 +185,7 @@ class ScheduledJobModelTests(TestCase):
 
 class PartnerStatusViewTests(TestCase):
     pass
+
 
 class PartnerStatusDetailViewTests(TestCase):
     pass
