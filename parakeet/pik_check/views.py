@@ -4,6 +4,7 @@ from .models import Browser, Partner, CheckRunResult, CheckStageResult
 import django.utils.timezone
 from django.db.models import Q
 
+
 def index(request):
     return render(request, 'pik_check/index.html')
 
