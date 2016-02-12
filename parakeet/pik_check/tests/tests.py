@@ -131,6 +131,15 @@ class PartnerDetailViewTests(TestCase):
 
     def test_detail_view_of_disabled_partner_indicates_partner_is_disabled(self):
         self.skipTest('not implemented yet')
+        partner = factories.PartnerFactory()
+        partner.active_after = django.utils.timezone.now().date() - datetime.timedelta(days=1)
+        partner.inactive_after = django.utils.timezone.now().date() - datetime.timedelta(days=1)
+        partner.full_clean()
+        partner.save()
+        response = self.client.get(reverse('pik_check:partner_detail', args=(partner.id,)))
+        self.assertFalse(partner.is_active)
+        # This seems silly, and ties awfully close to the template implementation...
+        self.assertContains(response, '<th>Active</th><td>True</td>', count=1)
 
     def test_view_indicates_future_activation_for_partner_with_active_after_in_future(self):
         self.skipTest('not implemented yet')
