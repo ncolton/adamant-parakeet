@@ -30,9 +30,9 @@ class PartnerIndexView(generic.ListView):
         return Partner.objects.order_by('name').all()
 
 
-class PartnerDetailView(generic.DetailView):
-    model = Partner
-    template_name = 'pik_check/partner_detail.html'
+def partner_detail_view(request, pk):
+    partner = get_object_or_404(Partner, pk=pk)
+    return render(request, 'pik_check/partner_detail.html', {'partner': partner})
 
 
 def partner_status_view(request):

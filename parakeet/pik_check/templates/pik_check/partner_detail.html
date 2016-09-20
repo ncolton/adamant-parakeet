@@ -9,6 +9,6 @@
     <tr><th>Activation</th><td>{{ partner.active_after|default:"" }}</td></tr>
     <tr><th>Deactivation</th><td>{{ partner.inactive_after|default:"" }}</td></tr>
     <tr><th>Scheduling Interval</th><td>{{ partner.scheduling_interval|naturaldelta }}</td></tr>
-    <tr><th>Browsers</th><td>{{ partner.browsers }}</td></tr>
+    <tr><th>Browsers</th><td>{% for browser in partner.browsers.all %}{{ browser }}{% endfor %}</td></tr>
   </table>
 {% endblock content %}
